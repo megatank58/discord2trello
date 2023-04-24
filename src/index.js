@@ -12,43 +12,27 @@ const trelloEvents = new TrelloEvents({
   trello: {
     key: process.env.apiKey,
     token: process.env.apiToken,
-    boards: ["3iBR85ih"],
+    boards: ["vVC7mmAy"],
   },
 });
 
 setTimeout(() => {
-  trelloEvents.on("updateCard", async (event) => {
-    if (
-      event.data.card.idLabels &&
-      event.data.card.idLabels.length != event.data.old.idLabels.length
-    ) {
-      const oldLabels = event.data.old.idLabels;
-      const newLabels = event.data.card.idLabels;
-      if (oldLabels.length !== newLabels.length) {
-        const username = event.data.card.name;
-        const guild = client.guilds.cache.get(process.env.guildId);
-        const user = await guild.members.fetch({
-          query: username.split("#")[0],
-          force: true,
-        });
+  trelloEvents.on("addMemberToCard", async (event) => {
+    let guild = client.guilds.cache.get(process.env.discordToken);
+    let user = await guild.members.fetch({ query: event.data.member.name, force: true });
 
-        for (const label of oldLabels) {
-          const role = guild.roles.cache.find((r) => r.name === label.name);
-          if (!role) continue;
-          if (!newLabels.includes(label.id)) {
-            await user.roles.remove(role);
-          }
-        }
+    let role = guild.roles.cache.find(role => role.name === event.data.card.name);
 
-        for (const label of newLabels) {
-          const role = guild.roles.cache.find((r) => r.name === label.name);
-          if (!role) continue;
-          if (!oldLabels.includes(label.id)) {
-            await user.roles.add(role);
-          }
-        }
-      }
-    }
+    user.roles.add(role);
+  });
+
+  trelloEvents.on("removeMemberFromCard", async (event) => {
+    let guild = client.guilds.cache.get(process.env.discordToken);
+    let user = await guild.members.fetch({ query: event.data.member.name, force: true });
+
+    let role = guild.roles.cache.find(role => role.name === event.data.card.name);
+
+    user.roles.remove(role);
   });
 }, 5_000);
 
