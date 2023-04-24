@@ -26,7 +26,7 @@ setTimeout(() => {
       const newLabels = event.data.card.idLabels;
       if (oldLabels.length !== newLabels.length) {
         const username = event.data.card.name;
-        const guild = client.guilds.cache.first();
+        const guild = client.guilds.cache.get(process.env.guildId);
         const user = await guild.members.fetch({
           query: username.split("#")[0],
           force: true,
