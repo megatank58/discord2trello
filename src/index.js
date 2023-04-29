@@ -14,7 +14,7 @@ const trelloEvents = new TrelloEvents({
   },
 });
 
-setTimeout(() => {
+setTimeout(async () => {
   let guild = client.guilds.cache.get(process.env.guildId);
 
   trelloEvents.on("updateCard", async (event) => {
@@ -30,9 +30,17 @@ setTimeout(() => {
 
     let role = guild.roles.cache.find((role) => role.name === label);
 
-    if (event.data.listAfter && event.data.listAfter.name == "Discontinued")
+    if (event.data.listAfter && event.data.listAfter.name == "Discontinued") {
+      let dm = await user.createDM();
+      dm.send({
+        content: `💌 Hey ${user}, Support လုပ်တာကုန်တော့မှာ နောက်တစ်ပတ်အတွက် ထပ်ပြီး Support ချင်ရင် Bloxtoys ကိုသွားပြီး Support လုပ်လို့ရပါတယ်နော်။\n\nLink: https://www.facebook.com/BloxToys 
+      `,
+        files: [
+          "https://media.discordapp.net/attachments/985918043089690694/1101768586877476885/SUPPORT_YOUTUBERS_15.png?width=497&height=417",
+        ],
+      });
       await user.roles.remove(role);
-    else await user.roles.add(role);
+    } else await user.roles.add(role);
   });
 }, 5_000);
 
