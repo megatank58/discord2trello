@@ -18,6 +18,7 @@ setTimeout(async () => {
   let guild = client.guilds.cache.get(process.env.guildId);
 
   trelloEvents.on("updateCard", async (event) => {
+    try {
     let username = event.data.card.name.split("/")[1].split("#")[0].trim();
     let label = event.data.card.name.split("/")[2].trim();
 
@@ -41,6 +42,7 @@ setTimeout(async () => {
       });
       await user.roles.remove(role);
     } else await user.roles.add(role);
+    } catch (e) { console.log(e); }
   });
 }, 5_000);
 
